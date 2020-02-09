@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+
+interface Book {
+    name: string
+}
 
 const App = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    const [books, setBooks] = useState<Book[]>([]);
+    const fetchBooks = async () => {
+        const response: Response = await fetch(
+            'https://www.anapioficeandfire.com/api/books',
+            {headers: {'Content-Type': 'application/json'}, method: "GET"});
+        setBooks(await response.json());
+    };
+
+    return (
+        <div className="App">
+            <button onClick={fetchBooks}>Get GoT books</button>
+            {books.map((book, index) => {
+                const indexToDisplay = index += 1;
+                return <div key={`book${index}`}>{indexToDisplay}&nbsp;{book.name}</div>
+            })}
+        </div>
+    );
+};
 
 export default App;
