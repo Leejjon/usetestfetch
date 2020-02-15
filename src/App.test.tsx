@@ -31,7 +31,6 @@ describe('Test App', () => {
 
         // Find the button to retrieve the books
         const button = getByText('Get GoT books');
-        expect(button).toBeInTheDocument();
 
         // Actually click the button.
         fireEvent.click(button);
@@ -49,16 +48,24 @@ describe('Test App', () => {
             Promise.reject('TypeError: Failed to fetch')
         );
 
-        // Render the App
         const {getByText} = render(<App/>);
-
-        // Find the button to retrieve the books
         const button = getByText('Get GoT books');
-        expect(button).toBeInTheDocument();
-
         fireEvent.click(button);
 
         const errorMessage = await waitForElement(() => getByText('Error: We were unable not retrieve any books due to connection problems. Please check your internet connection.'));
+        expect(errorMessage).toBeInTheDocument();
+    });
+
+    test('Verify if books are retrieved on button click - error page not found', async () => {
+        fetchMock.mock('https://www.anapioficeandfire.com/api/books', {
+            status: 404
+        });
+
+        const {getByText} = render(<App/>);
+        const button = getByText('Get GoT books');
+        fireEvent.click(button);
+
+        const errorMessage = await waitForElement(() => getByText('Error: The server could not find this page.'));
         expect(errorMessage).toBeInTheDocument();
     });
 });

@@ -12,8 +12,15 @@ const App = () => {
             const response: Response = await fetch(
                 'https://www.anapioficeandfire.com/api/books',
                 {headers: {'Content-Type': 'application/json'}, method: "GET"});
-            setBooks(await response.json());
-            setErrorMessage(undefined);
+
+            if (response.status === 200) {
+                setBooks(await response.json());
+                setErrorMessage(undefined);
+            } else if (response.status === 404) {
+                setErrorMessage('The server could not find this page.');
+            } else {
+                setErrorMessage('The server did not respond the data we wanted. We apologize for the inconvenience.');
+            }
         } catch (cause) {
             setErrorMessage('We were unable not retrieve any books due to connection problems. Please check your internet connection.');
         }
