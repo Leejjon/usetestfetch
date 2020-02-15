@@ -4,7 +4,11 @@ import App from './App';
 import fetchMock from "fetch-mock";
 
 describe('Test App', () => {
-    test('Verify if books are retrieved on button click', async () => {
+    afterEach(() => {
+        fetchMock.restore();
+    });
+
+    test('Verify if books are retrieved on button click - success', async () => {
         const books = [
             {name: 'A Game of Thrones'},
             {name: 'A Clash of Kings'},
@@ -37,5 +41,24 @@ describe('Test App', () => {
             () => getByText('1 A Game of Thrones')
         );
         expect(book1).toBeInTheDocument();
+    });
+
+    test('Verify if books are retrieved on button click - error no internet', async () => {
+        fetchMock.mock(
+            'https://www.anapioficeandfire.com/api/books',
+            Promise.reject('TypeError: Failed to fetch')
+        );
+
+        // Render the App
+        const {getByText} = render(<App/>);
+
+        // Find the button to retrieve the books
+        const button = getByText('Get GoT books');
+        expect(button).toBeInTheDocument();
+
+        fireEvent.click(button);
+
+        const errorMessage = await waitForElement(() => getByText('Error: We were unable not retrieve any books due to connection problems. Please check your internet connection.'));
+        expect(errorMessage).toBeInTheDocument();
     });
 });
