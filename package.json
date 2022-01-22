@@ -11,7 +11,7 @@
     "@types/react": "^16.9.19",
     "@types/react-dom": "^16.9.5",
     "fetch-mock": "8.3.2",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.1",
